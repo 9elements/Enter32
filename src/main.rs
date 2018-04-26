@@ -33,9 +33,11 @@ fn main() {
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
 
+    println!("TOMB1");
+
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
-    println!("TOMB");
+    println!("TOMB2");
 
     loop {
         matrix.canvas().set(16, 16, &color);
