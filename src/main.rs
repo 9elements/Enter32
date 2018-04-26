@@ -35,9 +35,11 @@ fn main() {
 
     println!("TOMB1");
 
-    let matrix = LedMatrix::new(Some(config)).unwrap();
+    let matrix = LedMatrix::new(Some(config));
 
     println!("TOMB2");
+
+    let matrix = matrix.unwrap();
 
     loop {
         matrix.canvas().set(16, 16, &color);
