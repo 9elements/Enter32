@@ -34,7 +34,12 @@ fn main() {
     config.set_hardware_mapping("adafruit-hat");
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
-    matrix.canvas().set(16, 16, &color);
+
+    println!("TOMB");
+
+    loop {
+        matrix.canvas().set(16, 16, &color);
+    }
 
     // let mut gilrs = Gilrs::new().unwrap();
     //
