@@ -2,7 +2,7 @@ extern crate gilrs;
 extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
-use rpi_led_matrix::{LedColor, LedMatrix};
+use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 
 #[derive(Debug, Default)]
 struct ControllerState {
@@ -30,7 +30,10 @@ fn main() {
         blue: 0xff,
     };
 
-    let matrix = LedMatrix::new(None).unwrap();
+    let mut config = LedMatrixOptions::new();
+    config.set_hardware_mapping("adafruit-hat");
+
+    let matrix = LedMatrix::new(Some(config)).unwrap();
     matrix.canvas().set(16, 16, &color);
 
     // let mut gilrs = Gilrs::new().unwrap();
