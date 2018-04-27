@@ -1,8 +1,10 @@
 extern crate gilrs;
+extern crate image;
 extern crate rand;
 extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
+use image::DynamicImage;
 use rand::Rng;
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 use std::{thread, time::Duration};
@@ -27,34 +29,33 @@ const BUTTON_DOWN_VALUE: f32 = 1.0;
 const BUTTON_UP_VALUE: f32 = 0.0;
 
 fn main() {
-    let color = LedColor {
-        red: 0xff,
-        green: 0xff,
-        blue: 0xff,
-    };
-
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
     config.set_brightness(10).unwrap();
 
-    let matrix = LedMatrix::new(Some(config));
-
-    let matrix = matrix.unwrap();
+    let matrix = LedMatrix::new(Some(config)).unwrap();
 
     let mut canvas = matrix.canvas();
 
-    let mut rng = rand::thread_rng();
+    let image_data = include_bytes!("9e32.jpg");
 
-    loop {
-        for _ in 0..(32 * 32) {
-            let x: i32 = rng.gen_range(0, 32);
-            let y: i32 = rng.gen_range(0, 32);
-            canvas.set(x, y, &color);
-            thread::sleep(Duration::from_millis(10));
+    let image = image::load_from_memory(image_data).unwrap();
+
+    if let DynamicImage::ImageRgb8(img) = image {
+        for (x, y, color) in img.enumerate_pixels() {
+            let color = LedColor {
+                red: color[0],
+                green: color[1],
+                blue: color[2],
+            };
+
+            canvas.set(x as i32, y as i32, &color);
         }
 
-        canvas.clear();
+        thread::sleep(Duration::from_millis(2000));
     }
+
+    canvas.clear();
 
     // let mut gilrs = Gilrs::new().unwrap();
     //
