@@ -1,5 +1,20 @@
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+#[link_name = "rgbmatrix"]
+extern "C" {
+    pub fn delete_font();
+    pub fn draw_circle();
+    pub fn draw_line();
+    pub fn draw_text();
+    pub fn led_canvas_clear();
+    pub fn led_canvas_fill();
+    pub fn led_canvas_get_size();
+    pub fn led_canvas_set_pixel();
+    pub fn led_matrix_create();
+    pub fn led_matrix_create_from_options();
+    pub fn led_matrix_create_offscreen_canvas();
+    pub fn led_matrix_delete();
+    pub fn led_matrix_get_canvas();
+    pub fn led_matrix_print_flags();
+    pub fn led_matrix_swap_on_vsync();
+    pub fn load_font();
+    pub fn vertical_draw_text();
+}
