@@ -42,17 +42,21 @@ fn main() {
     let image = image::load_from_memory(image_data).unwrap();
 
     if let DynamicImage::ImageRgb8(img) = image {
-        for (x, y, color) in img.enumerate_pixels() {
-            let color = LedColor {
-                red: color[0],
-                green: color[1],
-                blue: color[2],
-            };
+        loop {
+            for (x, y, color) in img.enumerate_pixels() {
+                let color = LedColor {
+                    red: color[0],
+                    green: color[1],
+                    blue: color[2],
+                };
 
-            canvas.set(x as i32, y as i32, &color);
+                canvas.set(x as i32, y as i32, &color);
+            }
+
+            thread::sleep(Duration::from_millis(2000));
+
+            canvas.clear();
         }
-
-        thread::sleep(Duration::from_millis(2000));
     }
 
     canvas.clear();
