@@ -6,7 +6,6 @@ build = "build.rs"
 
 [dependencies]
 gilrs = "^0.6"
-rpi-led-matrix = "^0.1"
 
 [build-dependencies]
 bindgen = "0.36.0"

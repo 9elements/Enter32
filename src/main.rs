@@ -1,6 +1,8 @@
 extern crate gilrs;
 extern crate rpi_led_matrix;
 
+mod led_matrix;
+
 use gilrs::{ev::EventType, Button, Event, Gilrs};
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 
@@ -24,26 +26,26 @@ const BUTTON_DOWN_VALUE: f32 = 1.0;
 const BUTTON_UP_VALUE: f32 = 0.0;
 
 fn main() {
-    let color = LedColor {
-        red: 0xff,
-        green: 0xff,
-        blue: 0xff,
-    };
-
-    let mut config = LedMatrixOptions::new();
-    config.set_hardware_mapping("adafruit-hat");
-
-    println!("TOMB1");
-
-    let matrix = LedMatrix::new(Some(config));
-
-    println!("TOMB2");
-
-    let matrix = matrix.unwrap();
-
-    loop {
-        matrix.canvas().set(16, 16, &color);
-    }
+    // let color = LedColor {
+    //     red: 0xff,
+    //     green: 0xff,
+    //     blue: 0xff,
+    // };
+    //
+    // let mut config = LedMatrixOptions::new();
+    // config.set_hardware_mapping("adafruit-hat");
+    //
+    // println!("TOMB1");
+    //
+    // let matrix = LedMatrix::new(Some(config));
+    //
+    // println!("TOMB2");
+    //
+    // let matrix = matrix.unwrap();
+    //
+    // loop {
+    //     matrix.canvas().set(16, 16, &color);
+    // }
 
     // let mut gilrs = Gilrs::new().unwrap();
     //
