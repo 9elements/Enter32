@@ -32,6 +32,7 @@ fn main() {
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
     config.set_brightness(10).unwrap();
+    config.set_pwm_bits(9).unwrap();
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
