@@ -1,10 +1,8 @@
 extern crate gilrs;
-extern crate rpi_led_matrix;
 
 mod led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
-use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 
 #[derive(Debug, Default)]
 struct ControllerState {
