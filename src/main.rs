@@ -45,17 +45,19 @@ fn main() {
 
     let mut rng = rand::thread_rng();
 
-    for x in 0..32 {
-        for y in 0..32 {
-            let value: u8 = rng.gen_range(0, 10);
-            if value == 0 {
-                canvas.set(x + 1, y + 1, &color);
-                thread::sleep(Duration::from_millis(10));
+    loop {
+        for x in 0..32 {
+            for y in 0..32 {
+                let value: u8 = rng.gen_range(0, 10);
+                if value == 0 {
+                    canvas.set(x + 1, y + 1, &color);
+                    thread::sleep(Duration::from_millis(10));
+                }
             }
         }
-    }
 
-    canvas.clear();
+        canvas.clear();
+    }
 
     // let mut gilrs = Gilrs::new().unwrap();
     //
