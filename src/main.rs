@@ -1,7 +1,9 @@
 extern crate gilrs;
+extern crate rand;
 extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
+use rand::Rng;
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 use std::{thread, time::Duration};
 
@@ -33,7 +35,7 @@ fn main() {
 
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
-    config.set_brightness(30).unwrap();
+    config.set_brightness(10).unwrap();
 
     let matrix = LedMatrix::new(Some(config));
 
@@ -41,10 +43,15 @@ fn main() {
 
     let mut canvas = matrix.canvas();
 
+    let mut rng = rand::thread_rng();
+
     for x in 0..32 {
         for y in 0..32 {
-            canvas.set(x + 1, y + 1, &color);
-            thread::sleep(Duration::from_millis(10));
+            let value: u8 = rng.gen_range(0, 10);
+            if value == 0 {
+                canvas.set(x + 1, y + 1, &color);
+                thread::sleep(Duration::from_millis(10));
+            }
         }
     }
 
