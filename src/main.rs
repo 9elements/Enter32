@@ -3,7 +3,7 @@ extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
-use std::thread;
+use std::{thread, time::Duration};
 
 #[derive(Debug, Default)]
 struct ControllerState {
@@ -33,6 +33,7 @@ fn main() {
 
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
+    config.set_brightness(50).unwrap();
 
     let matrix = LedMatrix::new(Some(config));
 
@@ -40,12 +41,14 @@ fn main() {
 
     let mut canvas = matrix.canvas();
 
-    for x in 0..16 {
-        for y in 0..16 {
+    for x in 0..32 {
+        for y in 0..32 {
             canvas.set(x + 1, y + 1, &color);
-            thread::sleep_ms(500);
+            thread::sleep(Duration::from_millis(100));
         }
     }
+
+    canvas.clear();
 
     // let mut gilrs = Gilrs::new().unwrap();
     //
