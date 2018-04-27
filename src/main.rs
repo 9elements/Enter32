@@ -1,6 +1,5 @@
 extern crate gilrs;
-
-mod led_matrix;
+extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
 

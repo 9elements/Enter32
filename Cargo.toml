@@ -6,6 +6,7 @@ build = "build.rs"
 
 [dependencies]
 gilrs = "^0.6"
+rpi-led-matrix = { git = "https://github.com/sphinxc0re/rust-rpi-rgb-led-matrix.git" }
 
 [build-dependencies]
 bindgen = "0.36.0"
