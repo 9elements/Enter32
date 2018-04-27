@@ -46,14 +46,11 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     loop {
-        for x in 0..32 {
-            for y in 0..32 {
-                let value: u8 = rng.gen_range(0, 10);
-                if value == 0 {
-                    canvas.set(x + 1, y + 1, &color);
-                    thread::sleep(Duration::from_millis(10));
-                }
-            }
+        for _ in 0..(32 * 32) {
+            let x: i32 = rng.gen_range(0, 32);
+            let y: i32 = rng.gen_range(0, 32);
+            canvas.set(x, y, &color);
+            thread::sleep(Duration::from_millis(10));
         }
 
         canvas.clear();
