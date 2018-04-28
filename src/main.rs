@@ -49,7 +49,7 @@ fn main() {
     let (frame_sender, frame_reveicer) = mpsc::channel();
     let (input_sender, input_reveicer) = mpsc::channel();
 
-    thread::spawn(move || {
+    let handle = thread::spawn(move || {
         let mut sys = EnterSystem::new(input_reveicer, frame_sender);
 
         let program = Program::from_file("enter.rom").unwrap();
@@ -59,7 +59,7 @@ fn main() {
             .unwrap_or_else(|e| panic!("{}", e));
     });
 
-    loop {
+    'main: loop {
         let mut canvas = matrix.offscreen_canvas();
         // Examine new events
         if let Some(Event { event, .. }) = gilrs.next_event() {
@@ -128,15 +128,17 @@ fn main() {
                             }
                             index += 1;
                         } else {
-                            break;
+                            break 'main;
                         }
                     }
                 }
             }
-            Err(TryRecvError::Disconnected) => return,
+            Err(TryRecvError::Disconnected) => break 'main,
             _ => {}
         }
 
         matrix.swap(canvas);
     }
+
+    handle.join().unwrap();
 }
