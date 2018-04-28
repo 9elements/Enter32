@@ -30,8 +30,7 @@ const BUTTON_UP_VALUE: f32 = 0.0;
 fn main() {
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
-    config.set_brightness(10).unwrap();
-    config.set_pwm_bits(9).unwrap();
+    config.set_brightness(30).unwrap();
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
@@ -82,55 +81,34 @@ fn main() {
                 },
                 _ => {}
             }
-        }
-        canvas.clear();
 
-        if ctrl_state.a {
-            canvas.set(
-                0,
-                0,
-                &LedColor {
-                    red: 0x0f,
-                    green: 0xf0,
-                    blue: 0x0f,
-                },
-            );
-        }
-
-        if ctrl_state.b {
-            canvas.set(
-                16,
-                0,
-                &LedColor {
-                    red: 0x0f,
-                    green: 0xf0,
-                    blue: 0x0f,
-                },
-            );
-        }
-
-        if ctrl_state.x {
-            canvas.set(
-                0,
-                16,
-                &LedColor {
-                    red: 0x0f,
-                    green: 0xf0,
-                    blue: 0x0f,
-                },
-            );
-        }
-
-        if ctrl_state.y {
-            canvas.set(
-                16,
-                16,
-                &LedColor {
-                    red: 0x0f,
-                    green: 0xf0,
-                    blue: 0x0f,
-                },
-            );
+            if ctrl_state.a {
+                canvas.fill(&LedColor {
+                    red: 0xff,
+                    green: 0x00,
+                    blue: 0x00,
+                });
+            } else if ctrl_state.b {
+                canvas.fill(&LedColor {
+                    red: 0xff,
+                    green: 0xff,
+                    blue: 0x00,
+                });
+            } else if ctrl_state.x {
+                canvas.fill(&LedColor {
+                    red: 0x00,
+                    green: 0x00,
+                    blue: 0xff,
+                });
+            } else if ctrl_state.y {
+                canvas.fill(&LedColor {
+                    red: 0x00,
+                    green: 0xff,
+                    blue: 0x00,
+                });
+            } else {
+                canvas.clear();
+            }
         }
     }
 }
