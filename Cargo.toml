@@ -7,4 +7,4 @@ authors = ["Julian Laubstein <contact@julianlaubstein.de>"]
 gilrs = "^0.6"
 rpi-led-matrix = { git = "https://github.com/sphinxc0re/rust-rpi-rgb-led-matrix.git" }
 rand = "^0.4"
-image = "0.19.0"
+melon = "0.10.0"

@@ -1,10 +1,9 @@
 extern crate gilrs;
-extern crate image;
+extern crate melon;
 extern crate rand;
 extern crate rpi_led_matrix;
 
 use gilrs::{ev::EventType, Button, Event, Gilrs};
-use image::DynamicImage;
 use rand::Rng;
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 use std::{thread, time::Duration};
@@ -38,80 +37,100 @@ fn main() {
 
     let mut canvas = matrix.canvas();
 
-    let image_data = include_bytes!("9e32.jpg");
+    let mut gilrs = Gilrs::new().unwrap();
 
-    let image = image::load_from_memory(image_data).unwrap();
+    let mut ctrl_state = ControllerState::default();
 
-    if let DynamicImage::ImageRgb8(img) = image {
-        loop {
-            for (x, y, color) in img.enumerate_pixels() {
-                let color = LedColor {
-                    red: color[0],
-                    green: color[1],
-                    blue: color[2],
-                };
-
-                canvas.set(x as i32, y as i32, &color);
+    loop {
+        // Examine new events
+        while let Some(Event { event, .. }) = gilrs.next_event() {
+            match event {
+                EventType::ButtonChanged(button, value, ..) => match button {
+                    Button::South => ctrl_state.b = value == BUTTON_DOWN_VALUE,
+                    Button::East => ctrl_state.a = value == BUTTON_DOWN_VALUE,
+                    Button::North => ctrl_state.x = value == BUTTON_DOWN_VALUE,
+                    Button::West => ctrl_state.y = value == BUTTON_DOWN_VALUE,
+                    Button::LeftTrigger => ctrl_state.left_trigger = value == BUTTON_DOWN_VALUE,
+                    Button::RightTrigger => ctrl_state.right_trigger = value == BUTTON_DOWN_VALUE,
+                    Button::Select => ctrl_state.select = value == BUTTON_DOWN_VALUE,
+                    Button::Start => ctrl_state.start = value == BUTTON_DOWN_VALUE,
+                    Button::DPadUp => {
+                        if value == BUTTON_UP_VALUE {
+                            ctrl_state.d_pad_up = true;
+                            ctrl_state.d_pad_down = !ctrl_state.d_pad_up;
+                        } else if value == BUTTON_DOWN_VALUE {
+                            ctrl_state.d_pad_down = true;
+                            ctrl_state.d_pad_up = !ctrl_state.d_pad_down;
+                        } else {
+                            ctrl_state.d_pad_up = false;
+                            ctrl_state.d_pad_down = false;
+                        }
+                    }
+                    Button::DPadRight => {
+                        if value == BUTTON_DOWN_VALUE {
+                            ctrl_state.d_pad_right = true;
+                            ctrl_state.d_pad_left = !ctrl_state.d_pad_right;
+                        } else if value == BUTTON_UP_VALUE {
+                            ctrl_state.d_pad_left = true;
+                            ctrl_state.d_pad_right = !ctrl_state.d_pad_left;
+                        } else {
+                            ctrl_state.d_pad_right = false;
+                            ctrl_state.d_pad_left = false;
+                        }
+                    }
+                    _ => {}
+                },
+                _ => {}
             }
+        }
+        canvas.clear();
 
-            thread::sleep(Duration::from_millis(2000));
+        if ctrl_state.a {
+            canvas.set(
+                0,
+                0,
+                &LedColor {
+                    red: 0x0f,
+                    green: 0xf0,
+                    blue: 0x0f,
+                },
+            );
+        }
 
-            canvas.clear();
+        if ctrl_state.b {
+            canvas.set(
+                16,
+                0,
+                &LedColor {
+                    red: 0x0f,
+                    green: 0xf0,
+                    blue: 0x0f,
+                },
+            );
+        }
+
+        if ctrl_state.x {
+            canvas.set(
+                0,
+                16,
+                &LedColor {
+                    red: 0x0f,
+                    green: 0xf0,
+                    blue: 0x0f,
+                },
+            );
+        }
+
+        if ctrl_state.y {
+            canvas.set(
+                16,
+                16,
+                &LedColor {
+                    red: 0x0f,
+                    green: 0xf0,
+                    blue: 0x0f,
+                },
+            );
         }
     }
-
-    canvas.clear();
-
-    // let mut gilrs = Gilrs::new().unwrap();
-    //
-    // let mut ctrl_state = ControllerState::default();
-    //
-    // loop {
-    //     // Examine new events
-    //     while let Some(Event { event, .. }) = gilrs.next_event() {
-    //         match event {
-    //             EventType::ButtonChanged(button, value, ..) => {
-    //                 match button {
-    //                     Button::South => ctrl_state.b = value == BUTTON_DOWN_VALUE,
-    //                     Button::East => ctrl_state.a = value == BUTTON_DOWN_VALUE,
-    //                     Button::North => ctrl_state.x = value == BUTTON_DOWN_VALUE,
-    //                     Button::West => ctrl_state.y = value == BUTTON_DOWN_VALUE,
-    //                     Button::LeftTrigger => ctrl_state.left_trigger = value == BUTTON_DOWN_VALUE,
-    //                     Button::RightTrigger => {
-    //                         ctrl_state.right_trigger = value == BUTTON_DOWN_VALUE
-    //                     }
-    //                     Button::Select => ctrl_state.select = value == BUTTON_DOWN_VALUE,
-    //                     Button::Start => ctrl_state.start = value == BUTTON_DOWN_VALUE,
-    //                     Button::DPadUp => {
-    //                         if value == BUTTON_UP_VALUE {
-    //                             ctrl_state.d_pad_up = true;
-    //                             ctrl_state.d_pad_down = !ctrl_state.d_pad_up;
-    //                         } else if value == BUTTON_DOWN_VALUE {
-    //                             ctrl_state.d_pad_down = true;
-    //                             ctrl_state.d_pad_up = !ctrl_state.d_pad_down;
-    //                         } else {
-    //                             ctrl_state.d_pad_up = false;
-    //                             ctrl_state.d_pad_down = false;
-    //                         }
-    //                     }
-    //                     Button::DPadRight => {
-    //                         if value == BUTTON_DOWN_VALUE {
-    //                             ctrl_state.d_pad_right = true;
-    //                             ctrl_state.d_pad_left = !ctrl_state.d_pad_right;
-    //                         } else if value == BUTTON_UP_VALUE {
-    //                             ctrl_state.d_pad_left = true;
-    //                             ctrl_state.d_pad_right = !ctrl_state.d_pad_left;
-    //                         } else {
-    //                             ctrl_state.d_pad_right = false;
-    //                             ctrl_state.d_pad_left = false;
-    //                         }
-    //                     }
-    //                     _ => {}
-    //                 }
-    //                 println!("ControllerState {:#?}", ctrl_state);
-    //             }
-    //             _ => {}
-    //         }
-    //     }
-    // }
 }
