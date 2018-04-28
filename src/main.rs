@@ -3,13 +3,21 @@ extern crate melon;
 extern crate rand;
 extern crate rpi_led_matrix;
 
+mod enter_system;
+
+use enter_system::EnterSystem;
 use gilrs::{ev::EventType, Button, Event, Gilrs};
+use melon::{Program, System, VM};
 use rand::Rng;
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
-use std::{thread, time::Duration};
+use std::{sync::mpsc::{self, TryRecvError},
+          thread,
+          time::Duration};
 
-#[derive(Debug, Default)]
-struct ControllerState {
+const DIMENSION: usize = 32;
+
+#[derive(Debug, Default, Clone)]
+pub struct ControllerState {
     pub a: bool,
     pub b: bool,
     pub x: bool,
@@ -34,15 +42,27 @@ fn main() {
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
-    let mut canvas = matrix.canvas();
-
     let mut gilrs = Gilrs::new().unwrap();
 
     let mut ctrl_state = ControllerState::default();
 
+    let (frame_sender, frame_reveicer) = mpsc::channel();
+    let (input_sender, input_reveicer) = mpsc::channel();
+
+    thread::spawn(move || {
+        let mut sys = EnterSystem::new(input_reveicer, frame_sender);
+
+        let program = Program::from_file("enter.rom").unwrap();
+
+        VM::default()
+            .exec(&program, &mut sys)
+            .unwrap_or_else(|e| panic!("{}", e));
+    });
+
     loop {
+        let mut canvas = matrix.offscreen_canvas();
         // Examine new events
-        while let Some(Event { event, .. }) = gilrs.next_event() {
+        if let Some(Event { event, .. }) = gilrs.next_event() {
             match event {
                 EventType::ButtonChanged(button, value, ..) => match button {
                     Button::South => ctrl_state.b = value == BUTTON_DOWN_VALUE,
@@ -82,34 +102,41 @@ fn main() {
                 _ => {}
             }
 
-            const BASIC_DIFF: u8 = 64;
-
-            let mut basic_color_red = 0x00;
-            let mut basic_color_green = 0x00;
-            let mut basic_color_blue = 0x00;
-
-            if ctrl_state.a {
-                basic_color_red = BASIC_DIFF;
-            }
-
-            if ctrl_state.b {
-                basic_color_red += BASIC_DIFF;
-                basic_color_green += BASIC_DIFF;
-            }
-
-            if ctrl_state.x {
-                basic_color_blue += BASIC_DIFF;
-            }
-
-            if ctrl_state.y {
-                basic_color_green += BASIC_DIFF;
-            }
-
-            canvas.fill(&LedColor {
-                red: basic_color_red,
-                green: basic_color_green,
-                blue: basic_color_blue,
-            });
+            input_sender.send(ctrl_state.clone()).unwrap();
         }
+
+        match frame_reveicer.try_recv() {
+            Ok(frame) => {
+                let frame: Vec<u8> = frame;
+
+                assert!(frame.len() <= DIMENSION * DIMENSION);
+
+                let mut index = 0;
+                for y_coord in 0..DIMENSION {
+                    for x_coord in 0..DIMENSION {
+                        if let Some(byte) = frame.get(index) {
+                            if byte != &0x00 {
+                                canvas.set(
+                                    x_coord as i32,
+                                    y_coord as i32,
+                                    &LedColor {
+                                        red: 0xff,
+                                        green: 0xff,
+                                        blue: 0xff,
+                                    },
+                                );
+                            }
+                            index += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+            Err(TryRecvError::Disconnected) => return,
+            _ => {}
+        }
+
+        matrix.swap(canvas);
     }
 }
