@@ -50,6 +50,7 @@ impl System for EnterSystem {
     fn system_call(&mut self, vm: &mut VM, signal: u16) -> Result<()> {
         match signal {
             SIGNAL_FLUSH_FRAME => {
+                println!("FLUSH");
                 let current_frame = &vm.mem[0..NUM_FRAME_BYTES];
 
                 self.frame_sender.send(current_frame.to_vec())?;

@@ -60,7 +60,7 @@ fn main() {
     });
 
     'main: loop {
-        let mut canvas = matrix.offscreen_canvas();
+        let mut canvas = matrix.canvas();
         // Examine new events
         if let Some(Event { event, .. }) = gilrs.next_event() {
             match event {
@@ -102,7 +102,9 @@ fn main() {
                 _ => {}
             }
 
-            input_sender.send(ctrl_state.clone()).unwrap();
+            if let Err(..) = input_sender.send(ctrl_state.clone()) {
+                break 'main;
+            }
         }
 
         match frame_reveicer.try_recv() {
@@ -132,8 +134,6 @@ fn main() {
                         }
                     }
                 }
-
-                matrix.swap(canvas);
             }
             Err(TryRecvError::Disconnected) => break 'main,
             _ => {}
