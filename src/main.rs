@@ -57,8 +57,9 @@ fn main() {
             .unwrap_or_else(|e| panic!("{}", e));
     });
 
+    let mut canvas = matrix.canvas();
+
     'main: loop {
-        let mut canvas = matrix.canvas();
         // Examine new events
         if let Some(Event { event, .. }) = gilrs.next_event() {
             match event {
@@ -115,17 +116,16 @@ fn main() {
                 for y_coord in 0..DIMENSION {
                     for x_coord in 0..DIMENSION {
                         if let Some(byte) = frame.get(index) {
-                            if byte != &0x00 {
-                                canvas.set(
-                                    x_coord as i32,
-                                    y_coord as i32,
-                                    &LedColor {
-                                        red: 0xff,
-                                        green: 0xff,
-                                        blue: 0xff,
-                                    },
-                                );
-                            }
+                            canvas.set(
+                                x_coord as i32,
+                                y_coord as i32,
+                                &LedColor {
+                                    red: 0xff,
+                                    green: *byte,
+                                    blue: 0xff,
+                                },
+                            );
+
                             index += 1;
                         } else {
                             break 'main;
