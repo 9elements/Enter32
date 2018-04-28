@@ -7,12 +7,10 @@ mod enter_system;
 
 use enter_system::EnterSystem;
 use gilrs::{ev::EventType, Button, Event, Gilrs};
-use melon::{Program, System, VM};
-use rand::Rng;
+use melon::{Program, VM};
 use rpi_led_matrix::{LedColor, LedMatrix, LedMatrixOptions};
 use std::{sync::mpsc::{self, TryRecvError},
-          thread,
-          time::Duration};
+          thread};
 
 const DIMENSION: usize = 32;
 
