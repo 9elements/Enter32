@@ -132,12 +132,12 @@ fn main() {
                         }
                     }
                 }
+
+                matrix.swap(canvas);
             }
             Err(TryRecvError::Disconnected) => break 'main,
             _ => {}
         }
-
-        matrix.swap(canvas);
     }
 
     handle.join().unwrap();
