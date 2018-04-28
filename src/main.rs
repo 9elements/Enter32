@@ -30,7 +30,7 @@ const BUTTON_UP_VALUE: f32 = 0.0;
 fn main() {
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
-    config.set_brightness(30).unwrap();
+    config.set_brightness(40).unwrap();
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
@@ -82,33 +82,34 @@ fn main() {
                 _ => {}
             }
 
+            const BASIC_DIFF: u8 = 64;
+
+            let mut basic_color_red = 0x00;
+            let mut basic_color_green = 0x00;
+            let mut basic_color_blue = 0x00;
+
             if ctrl_state.a {
-                canvas.fill(&LedColor {
-                    red: 0xff,
-                    green: 0x00,
-                    blue: 0x00,
-                });
-            } else if ctrl_state.b {
-                canvas.fill(&LedColor {
-                    red: 0xff,
-                    green: 0xff,
-                    blue: 0x00,
-                });
-            } else if ctrl_state.x {
-                canvas.fill(&LedColor {
-                    red: 0x00,
-                    green: 0x00,
-                    blue: 0xff,
-                });
-            } else if ctrl_state.y {
-                canvas.fill(&LedColor {
-                    red: 0x00,
-                    green: 0xff,
-                    blue: 0x00,
-                });
-            } else {
-                canvas.clear();
+                basic_color_red = BASIC_DIFF;
             }
+
+            if ctrl_state.b {
+                basic_color_red += BASIC_DIFF;
+                basic_color_green += BASIC_DIFF;
+            }
+
+            if ctrl_state.x {
+                basic_color_blue += BASIC_DIFF;
+            }
+
+            if ctrl_state.y {
+                basic_color_green += BASIC_DIFF;
+            }
+
+            canvas.fill(&LedColor {
+                red: basic_color_red,
+                green: basic_color_green,
+                blue: basic_color_blue,
+            });
         }
     }
 }
