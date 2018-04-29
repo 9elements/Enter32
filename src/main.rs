@@ -37,7 +37,7 @@ fn main() {
     println!("Initializing matrix driver");
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
-    config.set_brightness(20).unwrap();
+    config.set_brightness(40).unwrap();
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
