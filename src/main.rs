@@ -46,7 +46,7 @@ fn main() {
 
     let mut ctrl_state = ControllerState::default();
 
-    let color_map: Vec<_> = (0..256)
+    let color_map: Vec<_> = (0..255)
         .map(|color_byte| {
             let red = ((color_byte >> 5) & 0b111) * 36;
             let green = ((color_byte >> 2) & 0b111) * 36;
@@ -55,6 +55,8 @@ fn main() {
             LedColor { red, green, blue }
         })
         .collect();
+
+    println!("COLOR MAP LEN {:?}", color_map.len());
 
     let (frame_sender, frame_reveicer) = mpsc::channel();
     let (input_sender, input_reveicer) = mpsc::channel();
