@@ -34,19 +34,32 @@ const BUTTON_DOWN_VALUE: f32 = 1.0;
 const BUTTON_UP_VALUE: f32 = 0.0;
 
 fn main() {
+    println!("Initializing matrix driver");
     let mut config = LedMatrixOptions::new();
     config.set_hardware_mapping("adafruit-hat");
     config.set_brightness(20).unwrap();
 
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
+    println!("Initializing input driver");
     let mut gilrs = Gilrs::new().unwrap();
 
     let mut ctrl_state = ControllerState::default();
 
+    let color_map: Vec<_> = (0..255)
+        .map(|color_byte| {
+            let red = ((color_byte >> 5) & 0b111) * 36;
+            let green = ((color_byte >> 2) & 0b111) * 36;
+            let blue = (color_byte & 0b11) * 85;
+
+            LedColor { red, green, blue }
+        })
+        .collect();
+
     let (frame_sender, frame_reveicer) = mpsc::channel();
     let (input_sender, input_reveicer) = mpsc::channel();
 
+    println!("Spawning VM");
     let handle = thread::spawn(move || {
         let mut sys = EnterSystem::new(input_reveicer, frame_sender);
 
@@ -119,11 +132,7 @@ fn main() {
                             canvas.set(
                                 x_coord as i32,
                                 y_coord as i32,
-                                &LedColor {
-                                    red: 0xff,
-                                    green: *byte,
-                                    blue: 0xff,
-                                },
+                                color_map.get(*byte as usize).unwrap(),
                             );
 
                             index += 1;
