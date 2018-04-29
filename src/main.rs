@@ -107,9 +107,10 @@ fn main() {
         match frame_reveicer.try_recv() {
             Ok(frame) => {
                 let frame: Vec<u8> = frame;
-                let mut canvas = matrix.offscreen_canvas();
 
                 assert!(frame.len() <= DIMENSION * DIMENSION);
+
+                let mut canvas = matrix.offscreen_canvas();
 
                 let mut index = 0;
                 for y_coord in 0..DIMENSION {
