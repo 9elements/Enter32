@@ -59,12 +59,12 @@ fn main() {
     let (frame_sender, frame_reveicer) = mpsc::channel();
     let (input_sender, input_reveicer) = mpsc::channel();
 
-    println!("Spawning VM");
     let handle = thread::spawn(move || {
         let mut sys = EnterSystem::new(input_reveicer, frame_sender);
 
         let program = Program::from_file("enter.rom").unwrap();
 
+        println!("Running \"enter.rom\"");
         VM::default()
             .exec(&program, &mut sys)
             .unwrap_or_else(|e| panic!("{}", e));
