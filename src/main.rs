@@ -57,8 +57,6 @@ fn main() {
             .unwrap_or_else(|e| panic!("{}", e));
     });
 
-    let mut canvas = matrix.canvas();
-
     'main: loop {
         // Examine new events
         if let Some(Event { event, .. }) = gilrs.next_event() {
@@ -109,6 +107,7 @@ fn main() {
         match frame_reveicer.try_recv() {
             Ok(frame) => {
                 let frame: Vec<u8> = frame;
+                let mut canvas = matrix.offscreen_canvas();
 
                 assert!(frame.len() <= DIMENSION * DIMENSION);
 
@@ -132,6 +131,8 @@ fn main() {
                         }
                     }
                 }
+
+                matrix.swap(canvas);
             }
             Err(TryRecvError::Disconnected) => break 'main,
             _ => {}
