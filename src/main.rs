@@ -46,7 +46,7 @@ fn main() {
 
     let mut ctrl_state = ControllerState::default();
 
-    let color_map: Vec<_> = (0..255)
+    let color_map: Vec<_> = (0..256)
         .map(|color_byte| {
             let red = ((color_byte >> 5) & 0b111) * 36;
             let green = ((color_byte >> 2) & 0b111) * 36;
