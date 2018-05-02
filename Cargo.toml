@@ -8,3 +8,4 @@ gilrs = "^0.6"
 rpi-led-matrix = { git = "https://github.com/sphinxc0re/rust-rpi-rgb-led-matrix.git" }
 rand = "^0.4"
 melon = "^0.10"
+sdl2 = "0.31.0"
