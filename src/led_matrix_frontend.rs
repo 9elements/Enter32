@@ -22,14 +22,12 @@ pub fn start(
     let matrix = LedMatrix::new(Some(config)).unwrap();
 
     'main: loop {
-        if gilrs.counter().positive() {
-            if let Some(new_state) = ctrl_state.from_gamepad_state(&mut gilrs) {
-                if let Err(..) = input_sender.send(new_state.clone()) {
-                    break 'main;
-                }
-
-                ctrl_state = new_state
+        if let Some(new_state) = ctrl_state.from_gamepad_state(&mut gilrs) {
+            if let Err(..) = input_sender.send(new_state.clone()) {
+                break 'main;
             }
+
+            ctrl_state = new_state
         }
 
         match frame_reveicer.try_recv() {
@@ -44,7 +42,7 @@ pub fn start(
                 for y_coord in 0..DIMENSION {
                     for x_coord in 0..DIMENSION {
                         if let Some(byte) = frame.get(index) {
-                            let (red, green, blue) = color_map.get(*byte as usize).unwrap();
+                            let &(red, green, blue) = color_map.get(*byte as usize).unwrap();
 
                             canvas.set(
                                 x_coord as i32,
