@@ -3,21 +3,21 @@ extern crate melon;
 extern crate rand;
 #[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 extern crate rpi_led_matrix;
-#[cfg(not(any(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64"))))]
+#[cfg(not(any(target_os = "linux", target_arch = "arm", target_arch = "aarch64")))]
 extern crate sdl2;
 
 mod controller_state;
 mod def;
 mod enter_system;
 
-#[cfg(all(linux, any(target_arch = "arm", target_arch = "aarch64")))]
+#[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 mod led_matrix_frontend;
-#[cfg(all(linux, any(target_arch = "arm", target_arch = "aarch64")))]
+#[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 use led_matrix_frontend as frontend;
 
-#[cfg(not(any(linux, any(target_arch = "arm", target_arch = "aarch64"))))]
+#[cfg(not(any(target_os = "linux", target_arch = "arm", target_arch = "aarch64")))]
 mod sdl2_frontend;
-#[cfg(not(any(linux, any(target_arch = "arm", target_arch = "aarch64"))))]
+#[cfg(not(any(target_os = "linux", target_arch = "arm", target_arch = "aarch64")))]
 use sdl2_frontend as frontend;
 
 use controller_state::ControllerState;
