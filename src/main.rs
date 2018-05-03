@@ -1,9 +1,9 @@
 extern crate gilrs;
 extern crate melon;
 extern crate rand;
-#[cfg(all(linux, any(target_arch = "arm", target_arch = "aarch64")))]
+#[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 extern crate rpi_led_matrix;
-#[cfg(not(any(linux, any(target_arch = "arm", target_arch = "aarch64"))))]
+#[cfg(not(any(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64"))))]
 extern crate sdl2;
 
 mod controller_state;
