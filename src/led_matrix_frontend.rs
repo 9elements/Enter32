@@ -48,9 +48,9 @@ pub fn start(
                                 x_coord as i32,
                                 y_coord as i32,
                                 &LedColor {
-                                    red: *red,
-                                    green: *green,
-                                    blue: *blue,
+                                    red: red,
+                                    green: green,
+                                    blue: blue,
                                 },
                             );
 
