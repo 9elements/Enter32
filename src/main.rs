@@ -1,6 +1,5 @@
 extern crate gilrs;
 extern crate melon;
-extern crate rand;
 #[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 extern crate rpi_led_matrix;
 #[cfg(not(any(target_os = "linux", target_arch = "arm", target_arch = "aarch64")))]
@@ -22,12 +21,14 @@ use sdl2_frontend as frontend;
 
 use controller_state::ControllerState;
 use enter_system::EnterSystem;
-use melon::{Program, VM};
-use std::{sync::mpsc, thread};
+use melon::{Debugger, Program, VM};
+use std::{env, sync::mpsc, thread};
+
+const DEBUGGING_VAR: &str = "DEBUG";
 
 fn main() {
-    let color_map: Vec<_> = (0..256)
-        .map(|color_byte: u16| {
+    let color_map: Vec<_> = (0..=255)
+        .map(|color_byte| {
             let red = (((color_byte >> 5) & 0b111) * 36) as u8;
             let green = (((color_byte >> 2) & 0b111) * 36) as u8;
             let blue = ((color_byte & 0b11) * 85) as u8;
@@ -45,9 +46,15 @@ fn main() {
         let program = Program::from_file("enter.rom").unwrap();
 
         println!("Running \"enter.rom\"");
-        VM::default()
-            .exec(&program, &mut sys)
-            .unwrap_or_else(|e| panic!("{}", e));
+
+        match env::var(DEBUGGING_VAR) {
+            Ok(..) => Debugger::default()
+                .exec(&program, &mut sys)
+                .unwrap_or_else(|e| panic!("{}", e)),
+            _ => VM::default()
+                .exec(&program, &mut sys)
+                .unwrap_or_else(|e| panic!("{}", e)),
+        }
     });
 
     frontend::start(input_sender, frame_reveicer, &color_map);

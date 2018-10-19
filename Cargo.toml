@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = ["Julian Laubstein <contact@julianlaubstein.de>"]
 
 [dependencies]
-gilrs = "^0.6"
+gilrs = "0.6.0"
 rpi-led-matrix = { git = "https://github.com/sphinxc0re/rust-rpi-rgb-led-matrix.git" }
-rand = "^0.4"
-melon = "^0.10"
+rand = "0.5.0"
+melon = "^0.13"
 sdl2 = "0.31.0"
